@@ -48,6 +48,28 @@ func main() {
 			Usage:   "Setup user defaults",
 			Action:  command.InitUser,
 		},
+		{
+			Name:    "pomodoro",
+			Aliases: []string{"pom"},
+			Usage:   "Starts and stops pomodoros",
+			Subcommands: []cli.Command{
+				{
+					Name:   "start",
+					Usage:  "stars a new pom",
+					Action: command.PomodoroStart,
+					Flags: []cli.Flag{
+						cli.IntFlag{
+							Name:  "duration, d",
+							Value: 25,
+							Usage: "pom duration in minutes"}},
+				},
+				{
+					Name:   "stop",
+					Usage:  "stops a pom",
+					Action: command.PomodoroStop,
+				},
+			},
+		},
 	}
 
 	app.Run(os.Args)
