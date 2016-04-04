@@ -67,10 +67,10 @@ func runTimer(maxMinutes int, callback func()) {
 	startTime := time.Now()
 
 	fmt.Printf("\r0 minute")
-	tick := time.NewTicker(1 * time.Second)
+	tick := time.NewTicker(1 * time.Minute)
 	for now := range tick.C {
 
-		minute := int(now.Sub(startTime).Seconds())
+		minute := int(now.Sub(startTime).Minutes())
 		fmt.Printf("\r%d minute", minute)
 		if minute >= maxMinutes {
 			fmt.Printf("\n")
