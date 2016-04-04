@@ -10,6 +10,7 @@ import (
 
 var doneChan chan bool
 var duration int
+var breakDuration int
 
 // PomodoroConfiguration represents the pom config file
 type PomodoroConfiguration struct {
@@ -25,6 +26,7 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 	if duration <= 0 {
 		duration = config.Pomodoro.RunTime
 	}
+	breakDuration = config.Pomodoro.Break
 
 	fmt.Printf("Pom started for %d mintues\n", duration)
 	displayNotification(fmt.Sprintf("Pom started for %d mintues", duration))
@@ -52,7 +54,6 @@ func pomStartBreak() {
 
 	displayNotification("Break Time!")
 
-	breakDuration := int(float64(duration) * 0.2)
 	go runTimer(breakDuration, pomBreakOver)
 	<-doneChan
 }
@@ -66,10 +67,10 @@ func runTimer(maxMinutes int, callback func()) {
 	startTime := time.Now()
 
 	fmt.Printf("\r0 minute")
-	tick := time.NewTicker(1 * time.Minute)
+	tick := time.NewTicker(1 * time.Second)
 	for now := range tick.C {
 
-		minute := int(now.Sub(startTime).Minutes())
+		minute := int(now.Sub(startTime).Seconds())
 		fmt.Printf("\r%d minute", minute)
 		if minute >= maxMinutes {
 			fmt.Printf("\n")
