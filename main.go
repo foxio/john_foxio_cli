@@ -53,9 +53,11 @@ func main() {
 }
 
 func update(c *cli.Context) {
-	println("Updating ... ")
+	log.Println("Updating ... ")
+
 	writeConfigurationFile(c.App)
-	println("Updating complete")
+
+	log.Println("Updating complete")
 }
 
 func firstTimeSetup() bool {
@@ -67,15 +69,11 @@ func firstTimeSetup() bool {
 
 func readConfiguration() *Configuration {
 	dat, err := ioutil.ReadFile(configurationFilePath())
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 
 	var c Configuration
 	err = json.Unmarshal(dat, &c)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 
 	return &c
 }
@@ -83,21 +81,21 @@ func readConfiguration() *Configuration {
 func writeConfigurationFile(app *cli.App) {
 	configuration := Configuration{app.Version}
 	configurationJSON, err := json.Marshal(configuration)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 
 	err = ioutil.WriteFile(configurationFilePath(), configurationJSON, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 }
 
 func configurationFilePath() string {
 	usr, err := user.Current()
+	check(err)
+
+	return strings.Join([]string{usr.HomeDir, configurationFile}, string(os.PathSeparator))
+}
+
+func check(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	return strings.Join([]string{usr.HomeDir, configurationFile}, string(os.PathSeparator))
 }
