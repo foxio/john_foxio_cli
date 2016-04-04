@@ -21,7 +21,6 @@ func PomodoroStart(c *cli.Context) {
 
 	go runTimer(duration, pomCompleted)
 
-	fmt.Println("Waiting")
 	<-doneChan
 	fmt.Println("done")
 	pomStartBreak()
@@ -56,12 +55,14 @@ func pomBreakOver() {
 func runTimer(maxMinutes int, callback func()) {
 	startTime := time.Now()
 
+	fmt.Printf("\r0 minute")
 	tick := time.NewTicker(1 * time.Minute)
 	for now := range tick.C {
 
 		minute := int(now.Sub(startTime).Minutes())
-		fmt.Printf("%d minute\n", minute)
+		fmt.Printf("\r%d minute", minute)
 		if minute >= maxMinutes {
+			fmt.Printf("\n")
 			tick.Stop()
 			callback()
 		}
