@@ -1,26 +1,12 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"log"
 	"os"
-	"os/user"
-	"strings"
 
 	"github.com/codegangsta/cli"
 	"github.com/foxio/john_foxio_cli/command"
 )
-
-var (
-	configurationFile            = ".john_foxio"
-	configurationFilePermissions = os.FileMode(0644)
-)
-
-// Configuration represents the config file
-type Configuration struct {
-	Version string
-}
 
 func main() {
 	app := cli.NewApp()
@@ -29,12 +15,10 @@ func main() {
 	app.Version = "0.0.1"
 	app.Action = command.Default
 
-	if firstTimeSetup() {
-		writeConfigurationFile(app)
-	} else {
-		c := readConfiguration()
-		log.Println(c)
+	if command.FirstTimeSetup() {
+		command.WriteConfigurationFile(app)
 	}
+	config := command.ReadConfiguration()
 
 	app.Commands = []cli.Command{
 		{
@@ -46,7 +30,9 @@ func main() {
 			Name:    "init",
 			Aliases: []string{"in"},
 			Usage:   "Setup user defaults",
-			Action:  command.InitUser,
+			Action: func(c *cli.Context) {
+				command.InitUser(c)
+			},
 		},
 		{
 			Name:    "pomodoro",
@@ -54,13 +40,14 @@ func main() {
 			Usage:   "Starts and stops pomodoros",
 			Subcommands: []cli.Command{
 				{
-					Name:   "start",
-					Usage:  "stars a new pom",
-					Action: command.PomodoroStart,
+					Name:  "start",
+					Usage: "stars a new pom",
+					Action: func(c *cli.Context) {
+						command.PomodoroStart(c, config)
+					},
 					Flags: []cli.Flag{
 						cli.IntFlag{
 							Name:  "duration, d",
-							Value: 25,
 							Usage: "pom duration in minutes"}},
 				},
 				{
@@ -78,47 +65,7 @@ func main() {
 func update(c *cli.Context) {
 	log.Println("Updating ... ")
 
-	writeConfigurationFile(c.App)
+	command.WriteConfigurationFile(c.App)
 
 	log.Println("Updating complete")
-}
-
-func firstTimeSetup() bool {
-	if _, err := os.Stat(configurationFilePath()); os.IsNotExist(err) {
-		return true
-	}
-	return false
-}
-
-func readConfiguration() *Configuration {
-	dat, err := ioutil.ReadFile(configurationFilePath())
-	check(err)
-
-	var c Configuration
-	err = json.Unmarshal(dat, &c)
-	check(err)
-
-	return &c
-}
-
-func writeConfigurationFile(app *cli.App) {
-	configuration := Configuration{app.Version}
-	configurationJSON, err := json.Marshal(configuration)
-	check(err)
-
-	err = ioutil.WriteFile(configurationFilePath(), configurationJSON, configurationFilePermissions)
-	check(err)
-}
-
-func configurationFilePath() string {
-	usr, err := user.Current()
-	check(err)
-
-	return strings.Join([]string{usr.HomeDir, configurationFile}, string(os.PathSeparator))
-}
-
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }

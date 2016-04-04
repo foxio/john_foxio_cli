@@ -11,12 +11,22 @@ import (
 var doneChan chan bool
 var duration int
 
+// PomodoroConfiguration represents the pom config file
+type PomodoroConfiguration struct {
+	RunTime int
+	Break   int
+}
+
 // PomodoroStart starts a pom
-func PomodoroStart(c *cli.Context) {
+func PomodoroStart(c *cli.Context, config *Configuration) {
 	doneChan = make(chan bool)
 
-	fmt.Println("Pom starting")
 	duration = c.Int("duration")
+	if duration <= 0 {
+		duration = config.Pomodoro.RunTime
+	}
+
+	fmt.Printf("Pom started for %d mintues\n", duration)
 	displayNotification(fmt.Sprintf("Pom started for %d mintues", duration))
 
 	go runTimer(duration, pomCompleted)
