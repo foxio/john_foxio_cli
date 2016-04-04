@@ -11,3 +11,4 @@
     * uptime
     * loads at current time
     * etc
+* command: "john report" - pulls fun stats from a project and builds a report. Examples: commit count, commit streak, sprint burndown, invoice, PRs, Branches, deploys
