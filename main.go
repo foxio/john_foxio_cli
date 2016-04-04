@@ -13,7 +13,8 @@ import (
 )
 
 var (
-	configurationFile = ".john_foxio"
+	configurationFile            = ".john_foxio"
+	configurationFilePermissions = os.FileMode(0644)
 )
 
 // Configuration represents the config file
@@ -83,7 +84,7 @@ func writeConfigurationFile(app *cli.App) {
 	configurationJSON, err := json.Marshal(configuration)
 	check(err)
 
-	err = ioutil.WriteFile(configurationFilePath(), configurationJSON, 0644)
+	err = ioutil.WriteFile(configurationFilePath(), configurationJSON, configurationFilePermissions)
 	check(err)
 }
 
