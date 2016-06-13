@@ -6,6 +6,9 @@ import (
 
 	"github.com/codegangsta/cli"
 	"github.com/deckarep/gosx-notifier"
+	"github.com/tbruyelle/hipchat-go/hipchat"
+
+	"github.com/foxio/john_foxio_cli/services"
 )
 
 var doneChan chan bool
@@ -33,6 +36,12 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 
 	go runTimer(duration, pomCompleted)
 
+	userPresence := hipchat.UpdateUserPresenceRequest{
+		Show:   hipchat.UserPresenceShowDnd,
+		Status: "In 25m Pom",
+	}
+	updateHipChatStatus(userPresence)
+
 	<-doneChan
 	fmt.Println("done")
 	pomStartBreak()
@@ -51,6 +60,12 @@ func pomCompleted() {
 
 func pomStartBreak() {
 	fmt.Println("Break starting")
+
+	userPresence := hipchat.UpdateUserPresenceRequest{
+		Show:   hipchat.UserPresenceShowChat,
+		Status: "",
+	}
+	updateHipChatStatus(userPresence)
 
 	displayNotification("Break Time!")
 
@@ -86,4 +101,13 @@ func displayNotification(message string) {
 	note.AppIcon = "notification_icon.png"
 	note.Group = "com.foxio.john_foio.pomodoro"
 	note.Push()
+}
+
+func updateHipChatStatus(userPresence hipchat.UpdateUserPresenceRequest) {
+	var service services.Servicer
+	hipchatService := services.HipchatService{}
+	service = hipchatService
+	if service.Available() {
+		hipchatService.SetStatus(userPresence)
+	}
 }
