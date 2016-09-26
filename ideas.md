@@ -4,7 +4,7 @@
 * command: "john share <file>" copy file and make a private gist or snippet
 * command: "john pom" generates a pom for you. end sound? see https://github.com/edelprino/pom for example
    * Set slack/hipchat status as away
-* command: "john track start <message>" adds and starts harvest timing
+* command: "john track start \<message\>" adds and starts harvest timing
 * command: "john track stop" stops last tracking started through john?
 * command: "john status projectionhub.com" using AWS it could print out server statuses
     * Servers 
@@ -13,3 +13,7 @@
     * loads at current time
     * etc
 * command: "john report" - pulls fun stats from a project and builds a report. Examples: commit count, commit streak, sprint burndown, invoice, PRs, Branches, deploys
+* command: "john music play" - starts spotify or itunes
+* command: "john music pause" - pauses spotify or itunes
+* command: "john music next" - plays next song on spotify or itunes
+* interface: add menu bar helper
