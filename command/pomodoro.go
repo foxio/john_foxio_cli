@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/codegangsta/cli"
-	"github.com/deckarep/gosx-notifier"
+	notifier "github.com/deckarep/gosx-notifier"
 	"github.com/tbruyelle/hipchat-go/hipchat"
 
 	"github.com/foxio/john_foxio_cli/services"
@@ -87,6 +87,15 @@ func runTimer(maxMinutes int, callback func()) {
 
 		minute := int(now.Sub(startTime).Minutes())
 		fmt.Printf("\r%d minute", minute)
+
+		if minute%2 == 0 {
+			userPresence := hipchat.UpdateUserPresenceRequest{
+				Show:   hipchat.UserPresenceShowDnd,
+				Status: fmt.Sprintf("%dm left in Pom", maxMinutes-minute),
+			}
+			updateHipChatStatus(userPresence)
+		}
+
 		if minute >= maxMinutes {
 			fmt.Printf("\n")
 			tick.Stop()
@@ -96,10 +105,13 @@ func runTimer(maxMinutes int, callback func()) {
 }
 
 func displayNotification(message string) {
-	note := gosxnotifier.NewNotification(message)
-	note.Title = "John Foxio"
-	note.AppIcon = "notification_icon.png"
-	note.Group = "com.foxio.john_foio.pomodoro"
+	note := notifier.Notification{
+		Title:   "John Foxio",
+		Message: message,
+		AppIcon: "./command/notification_icon.png",
+		Sound:   notifier.Hero,
+	}
+
 	note.Push()
 }
 
