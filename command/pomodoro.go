@@ -34,11 +34,11 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 	fmt.Printf("Pom started for %d mintues\n", duration)
 	displayNotification(fmt.Sprintf("Pom started for %d mintues", duration))
 
-	go runTimer(duration, pomCompleted)
+	go runTimer(duration, pomCompleted, pomTick)
 
 	userPresence := hipchat.UpdateUserPresenceRequest{
 		Show:   hipchat.UserPresenceShowDnd,
-		Status: "In 25m Pom",
+		Status: fmt.Sprintf("In %dm Pom", duration),
 	}
 	updateHipChatStatus(userPresence)
 
@@ -58,6 +58,20 @@ func pomCompleted() {
 	doneChan <- true
 }
 
+func pomTick(maxMinutes int, minute int) {
+	if minute%2 == 0 {
+		userPresence := hipchat.UpdateUserPresenceRequest{
+			Show:   hipchat.UserPresenceShowDnd,
+			Status: fmt.Sprintf("%dm left in Pom", maxMinutes-minute),
+		}
+		updateHipChatStatus(userPresence)
+	}
+}
+
+func breakTick(maxMinutes int, minute int) {
+
+}
+
 func pomStartBreak() {
 	fmt.Println("Break starting")
 
@@ -69,7 +83,7 @@ func pomStartBreak() {
 
 	displayNotification("Break Time!")
 
-	go runTimer(breakDuration, pomBreakOver)
+	go runTimer(breakDuration, pomBreakOver, breakTick)
 	<-doneChan
 }
 
@@ -78,7 +92,7 @@ func pomBreakOver() {
 	doneChan <- true
 }
 
-func runTimer(maxMinutes int, callback func()) {
+func runTimer(maxMinutes int, callback func(), tickCallback func(maxMinutes int, minute int)) {
 	startTime := time.Now()
 
 	fmt.Printf("\r0 minute")
@@ -88,13 +102,7 @@ func runTimer(maxMinutes int, callback func()) {
 		minute := int(now.Sub(startTime).Minutes())
 		fmt.Printf("\r%d minute", minute)
 
-		if minute%2 == 0 {
-			userPresence := hipchat.UpdateUserPresenceRequest{
-				Show:   hipchat.UserPresenceShowDnd,
-				Status: fmt.Sprintf("%dm left in Pom", maxMinutes-minute),
-			}
-			updateHipChatStatus(userPresence)
-		}
+		tickCallback(maxMinutes, minute)
 
 		if minute >= maxMinutes {
 			fmt.Printf("\n")
