@@ -13,3 +13,9 @@ func SetSlackStatus(c *cli.Context) {
 	slackService := services.SlackService{}
 	slackService.SetStatus(status, emoji)
 }
+
+// ClearSlackStatus clears the slack status
+func ClearSlackStatus(c *cli.Context) {
+	slackService := services.SlackService{}
+	slackService.SetStatus("", "")
+}

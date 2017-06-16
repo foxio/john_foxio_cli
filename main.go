@@ -35,20 +35,31 @@ func main() {
 			},
 		},
 		{
-			Name:    "slack status",
-			Aliases: []string{"ss"},
-			Usage:   "Set the user's slack status",
-			Action: func(c *cli.Context) {
-				command.SetSlackStatus(c)
-			},
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "status, s",
-					Usage: "the status to send to slack",
+			Name:    "slack",
+			Aliases: []string{"slack"},
+			Usage:   "Interact with Slack",
+			Subcommands: []cli.Command{
+				{
+					Name:  "status",
+					Usage: "Set the user's slack status",
+					Action: func(c *cli.Context) {
+						command.SetSlackStatus(c)
+					},
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "status, s",
+							Usage: "the status to send to slack",
+						},
+						cli.StringFlag{
+							Name:  "emoji, e",
+							Usage: "the emoji to use",
+						},
+					},
 				},
-				cli.StringFlag{
-					Name:  "emoji, e",
-					Usage: "the emoji to use",
+				{
+					Name:   "clear",
+					Usage:  "Clear the user's slack status",
+					Action: command.ClearSlackStatus,
 				},
 			},
 		},
