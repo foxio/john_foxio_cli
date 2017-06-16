@@ -35,6 +35,24 @@ func main() {
 			},
 		},
 		{
+			Name:    "slack status",
+			Aliases: []string{"ss"},
+			Usage:   "Set the user's slack status",
+			Action: func(c *cli.Context) {
+				command.SetSlackStatus(c)
+			},
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "status, s",
+					Usage: "the status to send to slack",
+				},
+				cli.StringFlag{
+					Name:  "emoji, e",
+					Usage: "the emoji to use",
+				},
+			},
+		},
+		{
 			Name:    "pomodoro",
 			Aliases: []string{"pom"},
 			Usage:   "Starts and stops pomodoros",
