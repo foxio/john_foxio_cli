@@ -41,6 +41,7 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 		Status: fmt.Sprintf("In %dm Pom", duration),
 	}
 	updateHipChatStatus(userPresence)
+	updateSlackStatus(fmt.Sprintf("In %dm Pom", duration), ":timer_clock:")
 
 	<-doneChan
 	fmt.Println("done")
@@ -65,6 +66,7 @@ func pomTick(maxMinutes int, minute int) {
 			Status: fmt.Sprintf("%dm left in Pom", maxMinutes-minute),
 		}
 		updateHipChatStatus(userPresence)
+		updateSlackStatus(fmt.Sprintf("%dm left in Pom", maxMinutes-minute), ":timer_clock:")
 	}
 }
 
@@ -80,6 +82,7 @@ func pomStartBreak() {
 		Status: "",
 	}
 	updateHipChatStatus(userPresence)
+	updateSlackStatus("", "")
 
 	displayNotification("Break Time!")
 
@@ -121,6 +124,13 @@ func displayNotification(message string) {
 	}
 
 	note.Push()
+}
+
+func updateSlackStatus(status string, emoji string) {
+	slackService := services.SlackService{}
+	if slackService.Available() {
+		slackService.SetStatus(status, emoji)
+	}
 }
 
 func updateHipChatStatus(userPresence hipchat.UpdateUserPresenceRequest) {
