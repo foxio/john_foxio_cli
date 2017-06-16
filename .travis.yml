@@ -3,10 +3,14 @@ sudo: false
 go:
          - 1.6
          - 1.7
+         - 1.8
          - tip
 
 install:
   - go get -v github.com/codegangsta/cli
+  - go get -u github.com/nlopes/slack
+  - go get github.com/tbruyelle/hipchat-go/hipchat
+  - go get github.com/deckarep/gosx-notifier
 script:
     - make test
     - make build
