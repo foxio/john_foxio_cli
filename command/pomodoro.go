@@ -8,6 +8,7 @@ import (
 	notifier "github.com/deckarep/gosx-notifier"
 	"github.com/tbruyelle/hipchat-go/hipchat"
 
+	"github.com/foxio/john_foxio_cli/lib"
 	"github.com/foxio/john_foxio_cli/services"
 )
 
@@ -42,9 +43,10 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 	}
 	updateHipChatStatus(userPresence)
 	updateSlackStatus(fmt.Sprintf("In %dm Pom", duration), ":timer_clock:")
-
+	lib.LogPomStart()
 	<-doneChan
 	fmt.Println("done")
+	lib.LogPomComplete()
 	pomStartBreak()
 }
 
