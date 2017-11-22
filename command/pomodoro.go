@@ -2,6 +2,8 @@ package command
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/codegangsta/cli"
@@ -44,6 +46,18 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 	updateHipChatStatus(userPresence)
 	updateSlackStatus(fmt.Sprintf("In %dm Pom", duration), ":timer_clock:")
 	lib.LogPomStart()
+
+	interruptChan := make(chan os.Signal, 1)
+	signal.Notify(interruptChan, os.Interrupt)
+	go func() {
+		<-interruptChan
+		fmt.Println("")
+		PomodoroStop(c)
+		updateSlackStatus("", "")
+		lib.LogPomInterrupt()
+		os.Exit(0)
+	}()
+
 	<-doneChan
 	fmt.Println("done")
 	lib.LogPomComplete()
@@ -54,6 +68,16 @@ func PomodoroStart(c *cli.Context, config *Configuration) {
 func PomodoroStop(c *cli.Context) {
 	fmt.Println("Ending pom ...")
 	displayNotification("Pom stopped")
+}
+
+// PomodoroStop stops a pom
+func PomodoroCount(c *cli.Context) {
+	fmt.Println("Poms completed today: ", lib.CountPomsLogged())
+}
+
+// PomodoroShow prints today's log file
+func PomodoroShow(c *cli.Context) {
+	fmt.Println(lib.TodaysPomsLogged())
 }
 
 func pomCompleted() {
