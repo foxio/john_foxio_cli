@@ -12,7 +12,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "John"
 	app.Usage = "John Foxio, he's an extension of your team."
-	app.Version = "0.0.1"
+	app.Version = "0.0.2"
 	app.Action = command.Default
 
 	if command.FirstTimeSetup() {
@@ -83,6 +83,16 @@ func main() {
 					Name:   "stop",
 					Usage:  "stops a pom",
 					Action: command.PomodoroStop,
+				},
+				{
+					Name:   "count",
+					Usage:  "counts todays poms",
+					Action: command.PomodoroCount,
+				},
+				{
+					Name:   "show",
+					Usage:  "shows todays poms",
+					Action: command.PomodoroShow,
 				},
 			},
 		},
