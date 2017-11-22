@@ -47,7 +47,37 @@ func currentLogFile() (*os.File, error) {
 
 // CountPomsLogged returns cound of todays logged poms
 func CountPomsLogged() int {
-	return 1
+	logFile, err := currentLogFileName()
+	if err != nil {
+		log.Println("Could not find home dir: ", err)
+		return 0
+	}
+
+	file, err := os.Open(logFile)
+	defer file.Close()
+
+	if err != nil {
+		log.Println("Error reading today's logfile: ", err)
+		return 0
+	}
+
+	fullPomCount := 0
+	pomStarted := false
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		lineText := scanner.Text()
+		if strings.Contains(lineText, pomStart) {
+			pomStarted = true
+		} else if pomStarted && strings.Contains(lineText, pomDone) {
+			fullPomCount++
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return fullPomCount
 }
 
 // TodaysPomsLogged returns today's logged poms
