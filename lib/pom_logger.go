@@ -1,11 +1,13 @@
 package lib
 
 import (
+	"bufio"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -120,7 +122,7 @@ func LogPomComplete() {
 	}
 
 	log.SetOutput(f)
-	log.Println(pomDone)
+	log.Println(fmt.Sprintf("%s\n", pomDone))
 }
 
 // LogPomInterrupt logs pom interrupted to the pom log file
@@ -133,5 +135,5 @@ func LogPomInterrupt() {
 	}
 
 	log.SetOutput(f)
-	log.Println(pomInterrupt)
+	log.Println(fmt.Sprintf("%s\n", pomInterrupt))
 }
