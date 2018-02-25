@@ -5,13 +5,8 @@ go:
          - "1.10"
          - tip
 
-install:
-  - go get -v github.com/codegangsta/cli
-  - go get -u github.com/nlopes/slack
-  - go get github.com/tbruyelle/hipchat-go/hipchat
-  - go get github.com/deckarep/gosx-notifier
 script:
-    - make test
+    - go test -v -cover ./...
     - make build
 
 matrix:
