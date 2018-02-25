@@ -7,10 +7,10 @@
 Foxio internal tool to help complete daily tasks.
 
 ## Dependencies
-* `go get github.com/codegangsta/cli`
-* `go get github.com/deckarep/gosx-notifier`
-* `go get github.com/tbruyelle/hipchat-go/hipchat`
-* `go get -u github.com/nlopes/slack`
+
+Install go dep
+1. `brew install dep`
+1. `brew upgrade dep`
 
 ## Build & Run
 1. `go build -o john`
