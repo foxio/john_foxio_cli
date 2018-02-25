@@ -1,6 +1,6 @@
 # JohnFoxioCLI
 
-![Foxio logo](./assets/images/notification_icon.png)
+![Foxio logo](./assets/images/foxio_icon.png)
 
 [![Build Status](https://travis-ci.org/foxio/john_foxio_cli.svg?branch=master)](https://travis-ci.org/foxio/john_foxio_cli)
 

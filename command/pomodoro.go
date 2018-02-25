@@ -145,7 +145,7 @@ func displayNotification(message string) {
 	note := notifier.Notification{
 		Title:   "John Foxio",
 		Message: message,
-		AppIcon: "./command/notification_icon.png",
+		AppIcon: "assets/images/pomodoro.png",
 		Sound:   notifier.Hero,
 	}
 
